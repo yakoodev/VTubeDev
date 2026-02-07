@@ -34,3 +34,8 @@ workspace.json
 
 # ===== Unity packages lock (оставляем!) =====
 # Packages/packages-lock.json  <-- НЕ игнорим, пусть коммитится
+# Unity/IDE generated solution files (do not commit)
+unity/*.sln
+unity/*.csproj
+unity/*.csproj.user
+unity/*.vsconfig
