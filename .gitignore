@@ -1,4 +1,4 @@
-# Unity
+# ===== Unity generated =====
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -7,16 +7,30 @@
 [Ll]ogs/
 UserSettings/
 MemoryCaptures/
+Recordings/
 
-# IDE
+# Addressables cache (если включишь)
+[Aa]ssets/[Aa]ddressableAssetsData/*/*.bin*
+
+# ===== Visual Studio / Rider / VSCode =====
 .vscode/
 .idea/
 .vs/
+*.csproj.user
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
 
-# OS
+# ===== OS junk =====
 .DS_Store
 Thumbs.db
 
-# Local env
+# ===== Local config =====
 .env
 workspace.json
+
+# ===== Unity packages lock (оставляем!) =====
+# Packages/packages-lock.json  <-- НЕ игнорим, пусть коммитится
