@@ -68,6 +68,7 @@ Branch: task/A1_4-logging-requestid-sources
 
 Риски/заметки:
 - Тесты не прошли из-за `Permission denied` на NuGet кеш (см. вывод `dotnet test`).
+- После добавления `tools/dotnet-test.sh` тесты прошли: 3/3.
 
 PR:
 - https://github.com/yakoodev/VTubeDev/pull/5
