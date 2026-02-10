@@ -31,7 +31,7 @@
 
 ## Шаги реализации
 
-1. Описать минимальные файлы: `vtproj/scene/scene.json`, `vtproj/outputs/outputs.json`, `vtproj/ui/overlays/*.json`, `vtproj/workspace.json` (локально).
+1. Описать минимальные файлы: `vtproj/scene/scene.json`, `vtproj/outputs/outputs.json`, `vtproj/ui/overlays/*.json`. `workspace.json` — локальный файл профиля пользователя (НЕ внутри vtproj).
 2. Добавить `*Version` (например, `outputsVersion`, `formatsVersion`, `overlayFormatVersion`, `workspaceVersion`) и договориться о нумерации (например, 1.0).
 3. Добавить док `docs/vtproj.md` с примерами минимальных файлов.
 
