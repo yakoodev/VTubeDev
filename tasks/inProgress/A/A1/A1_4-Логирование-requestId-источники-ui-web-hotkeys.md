@@ -1,6 +1,9 @@
 # A1_4 — Логирование: requestId + источники (ui/web/hotkeys)
 
-**Status:** todo
+Status: ready for review  
+Owner: Codex  
+Started: 2026-02-10  
+Branch: task/A1_4-logging-requestid-sources
 
 
 ## Цель
@@ -48,3 +51,24 @@
 - RequestContext
 - Log adapter
 - Изменения web DTO
+
+## Отчёт выполнения
+
+Что сделано:
+- Добавлен `RequestContext` и прокинут в `SceneCommand`/`SceneCommandRequest`.
+- Нормализация `requestId/source/timestampUtc` в `/cmd` + запись логов с `requestId` и `source`.
+- Обновлён пример запроса в `app.http` под `context`.
+
+Как проверить:
+- `dotnet test app.Tests/app.Tests.csproj`
+- `POST /cmd` → в ответе `requestId`, в логах есть `SceneCommand enqueued ... requestId=... source=...`
+
+Коммиты:
+- `fae2757` feat(A1_4): add request context logging
+
+Риски/заметки:
+- Тесты не прошли из-за `Permission denied` на NuGet кеш (см. вывод `dotnet test`).
+- После добавления `tools/dotnet-test.sh` тесты прошли: 3/3.
+
+PR:
+- https://github.com/yakoodev/VTubeDev/pull/5

@@ -14,9 +14,11 @@ POST {{app_HostAddress}}/cmd
 Content-Type: application/json
 
 {
-  "requestId": "req_demo",
-  "source": "web",
-  "timestampUtc": "2026-02-10T00:00:00Z",
+  "context": {
+    "requestId": "req_demo",
+    "source": "web",
+    "timestampUtc": "2026-02-10T00:00:00Z"
+  },
   "command": {
     "type": "SetInputSource",
     "payload": { "mode": "VideoSim" }

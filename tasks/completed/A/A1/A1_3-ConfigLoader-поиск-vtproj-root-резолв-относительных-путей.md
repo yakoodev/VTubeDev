@@ -1,6 +1,6 @@
 # A1_3 — ConfigLoader: поиск vtproj root + резолв относительных путей
 
-**Status:** ready for review  
+**Status:** completed  
 **Owner:** Codex  
 **Started:** 2026-02-10  
 **Branch:** task/A1_3-configloader-vtproj-path-resolve
