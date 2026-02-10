@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VTube Scene Config",
+  "type": "object",
+  "required": ["sceneVersion", "id", "name", "defaultCameraId", "cameras"],
+  "additionalProperties": false,
+  "properties": {
+    "sceneVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "defaultCameraId": { "type": "string", "minLength": 1 },
+    "cameras": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

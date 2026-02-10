@@ -92,3 +92,11 @@
 - Производные форматы не должны вызывать дополнительный 3D‑рендер.
 - `vtproj` — единственный источник правды для shared/версионируемого состояния.
 - Локальные состояния, кеши и секреты — вне `vtproj`.
+
+## Валидация конфигов
+
+- JSON Schemas лежат в `unity/Assets/StreamingAssets/VTube/Schemas/`.
+- Editor: меню `VTube/Validate Configs`.
+- Runtime: валидация выполняется на старте.
+  - Укажите путь к `vtproj` через `VT_PROJECT_PATH` или аргумент `--vtproj=<path>`.
+  - Workspace (опционально) через `VT_WORKSPACE_PATH` или `--workspace=<path>`.
