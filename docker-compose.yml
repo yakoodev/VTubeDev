@@ -1,0 +1,5 @@
+services:
+  unity-mcp:
+    image: ivanmurzakdev/unity-mcp-server
+    ports:
+      - "8080:8080"
