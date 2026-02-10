@@ -68,3 +68,6 @@ Branch: task/A1_4-logging-requestid-sources
 
 Риски/заметки:
 - Тесты не прошли из-за `Permission denied` на NuGet кеш (см. вывод `dotnet test`).
+
+PR:
+- https://github.com/yakoodev/VTubeDev/pull/5
