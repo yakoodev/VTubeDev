@@ -1,6 +1,6 @@
 {
   "logLevel": 3,
-  "keepServerRunning": false,
+  "keepServerRunning": true,
   "transportMethod": 2,
   "tools": [
     {
