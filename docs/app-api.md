@@ -16,6 +16,9 @@ Response (200):
 }
 ```
 
+### `GET /api/metrics`
+Returns basic metrics for diagnostics.
+
 ### `GET /api/streams`
 Lists available streams (format/profile) and URLs.
 
@@ -36,9 +39,11 @@ Response (200):
 
 ### `GET /view/<formatId>/<profile>`
 Simple HTML viewer for OBS Browser Source. Must render the MJPEG stream or fall back to snapshot polling.
+Remote access requires a token (for non-localhost use).
 
 ### `GET /stream/<formatId>/<profile>.mjpg`
 MJPEG stream.
+Remote access requires a token (for non-localhost use).
 
 ### `GET /snapshot/<formatId>/<profile>.png`
 Latest PNG frame. Return 503 if no frame is available.
