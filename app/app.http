@@ -1,0 +1,24 @@
+@app_HostAddress = http://localhost:5214
+
+GET {{app_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+GET {{app_HostAddress}}/api/streams
+Accept: application/json
+
+###
+
+POST {{app_HostAddress}}/cmd
+Content-Type: application/json
+
+{
+  "requestId": "req_demo",
+  "source": "web",
+  "timestampUtc": "2026-02-10T00:00:00Z",
+  "command": {
+    "type": "SetInputSource",
+    "payload": { "mode": "VideoSim" }
+  }
+}

@@ -40,3 +40,9 @@ unity/*.sln
 unity/*.csproj
 unity/*.csproj.user
 unity/*.vsconfig
+
+# ===== App build artifacts =====
+app/bin/
+app/obj/
+app/.vs/
+app/*.csproj.user
