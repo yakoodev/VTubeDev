@@ -20,6 +20,7 @@
 - MMF имя: `vtube_frames_v1`
 - Сигнализация: `vtube_frames_signal_v1`
 - Модель: ring‑buffer из N слотов (по форматам/профилям).
+  - MVP: один слот, заголовок фиксированного размера `2048` байт.
 
 ## 2) Data Types
 
@@ -56,9 +57,14 @@
   "height": 1080,
   "pixelFormat": "RGBA32",
   "frameIndex": 12450,
-  "timestampUtc": "2026-02-10T00:00:00Z"
+  "timestampUtc": "2026-02-10T00:00:00Z",
+  "payloadLength": 8294400
 }
 ```
+
+MVP формат слота:
+- Header: JSON в UTF‑8, записывается в первые `2048` байт, остаток заполняется нулями.
+- Payload: raw RGBA32 (по умолчанию для MVP), длина = `payloadLength`.
 
 Payload кадра: raw RGBA32 (по умолчанию для MVP), допускается JPEG/PNG как вариант оптимизации.
 
