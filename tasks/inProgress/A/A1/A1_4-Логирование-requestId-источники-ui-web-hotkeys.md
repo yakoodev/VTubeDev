@@ -1,6 +1,6 @@
 # A1_4 — Логирование: requestId + источники (ui/web/hotkeys)
 
-Status: inProgress  
+Status: ready for review  
 Owner: Codex  
 Started: 2026-02-10  
 Branch: task/A1_4-logging-requestid-sources
@@ -64,7 +64,7 @@ Branch: task/A1_4-logging-requestid-sources
 - `POST /cmd` → в ответе `requestId`, в логах есть `SceneCommand enqueued ... requestId=... source=...`
 
 Коммиты:
-- (будут добавлены после фиксации)
+- `fae2757` feat(A1_4): add request context logging
 
 Риски/заметки:
 - Тесты не прошли из-за `Permission denied` на NuGet кеш (см. вывод `dotnet test`).
