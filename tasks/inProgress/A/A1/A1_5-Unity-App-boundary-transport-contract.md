@@ -1,6 +1,9 @@
 # A1_5 — Unity ↔ App: boundary & transport contract (v0.1)
 
-**Status:** todo
+**Status:** ready for review  
+**Owner:** Codex  
+**Started:** 2026-02-10  
+**Branch:** task/A1_5-unity-app-boundary-transport-contract
 
 ## Цель
 
@@ -44,3 +47,27 @@
 
 - Реализованный transport (Named Pipe + MMF)
 - Обновлённая документация/схемы при необходимости
+
+## Отчёт выполнения
+
+### Что сделано
+- Добавлен transport в app: Named Pipe сервер для `/cmd`, MMF reader + стор последнего кадра.
+- `/snapshot` теперь отдаёт PNG из MMF, `/stream` — MJPEG поток.
+- В Unity добавлены bootstrap + MMF writer (raw RGBA) и Named Pipe client с ack.
+- Документация по MMF слоту уточнена (фиксированный header).
+
+### Как проверить
+1. Запустить Unity (сцену можно любую) — должен появиться объект `VTube.Transport` и логи о pipe.
+2. Запустить app и запросить:
+   - `GET /snapshot/cam_main_16x9/release.png` → валидный PNG.
+   - `GET /stream/cam_main_16x9/release.mjpg` → MJPEG поток.
+   - `POST /cmd` → Unity получает лог по requestId.
+
+### Тесты
+- `dotnet test app.Tests` — не выполнилось из-за отказа в доступе к NuGet cache (`/home/yakoo/.local/share/NuGet/http-cache`).
+
+### Коммиты
+- (будут добавлены после коммита)
+
+### Риски / follow-up
+- `System.Drawing` зависит от Windows-рантайма; если нужна кросс‑платформенность, потребуется замена энкодера.

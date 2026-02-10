@@ -3,6 +3,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<app.Config.IPathResolver, app.Config.PathResolver>();
 builder.Services.AddSingleton<app.Config.IVtprojLocator>(_ => new app.Config.VtprojLocator(args));
 builder.Services.AddSingleton<app.Config.IConfigLoader, app.Config.ConfigLoader>();
+builder.Services.AddSingleton<app.Transport.FrameStore>();
+builder.Services.AddSingleton<app.Transport.FrameMmfReader>();
+builder.Services.AddSingleton<app.Transport.PipeCommandTransport>();
+builder.Services.AddHostedService<app.Transport.FrameReadService>();
+builder.Services.AddHostedService<app.Transport.PipeCommandServer>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

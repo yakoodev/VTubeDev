@@ -1,5 +1,7 @@
 using app.Models;
+using app.Transport;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace app.Controllers
 {
@@ -8,14 +10,17 @@ namespace app.Controllers
     public class CommandController : ControllerBase
     {
         private readonly ILogger<CommandController> _logger;
+        private readonly PipeCommandTransport _transport;
+        private readonly JsonSerializerOptions _jsonOptions = new(JsonSerializerDefaults.Web);
 
-        public CommandController(ILogger<CommandController> logger)
+        public CommandController(ILogger<CommandController> logger, PipeCommandTransport transport)
         {
             _logger = logger;
+            _transport = transport;
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] SceneCommandRequest request)
+        public async Task<IActionResult> Post([FromBody] SceneCommandRequest request, CancellationToken cancellationToken)
         {
             if (request.Command == null || string.IsNullOrWhiteSpace(request.Command.Type))
             {
@@ -40,6 +45,24 @@ namespace app.Controllers
                 Status = "accepted",
                 RequestId = context.RequestId
             };
+
+            var payloadJson = JsonSerializer.Serialize(request, _jsonOptions);
+            var ack = await _transport.SendAsync(payloadJson, cancellationToken);
+            if (ack == null)
+            {
+                return StatusCode(503, "Unity pipe is not connected");
+            }
+
+            if (!string.Equals(ack.Status, "accepted", StringComparison.OrdinalIgnoreCase))
+            {
+                var errorResponse = new CommandResponse
+                {
+                    Status = "rejected",
+                    RequestId = ack.RequestId,
+                    Error = ack.Error ?? "Rejected by Unity"
+                };
+                return BadRequest(errorResponse);
+            }
 
             return Accepted(response);
         }
