@@ -41,7 +41,7 @@ namespace app.Transport
                 offset += 4;
             }
 
-            return Image.LoadPixelData(pixels, width, height);
+            return Image.LoadPixelData<Rgba32>(pixels, width, height);
         }
     }
 }
