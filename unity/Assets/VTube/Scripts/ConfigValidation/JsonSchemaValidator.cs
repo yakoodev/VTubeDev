@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using com.IvanMurzak.Unity.MCP.Installer.SimpleJSON;
 
 namespace VTube.ConfigValidation
 {
@@ -33,10 +32,10 @@ namespace VTube.ConfigValidation
                 return errors;
             }
 
-            JSONNode schemaNode;
+            JsonDocument schemaDoc;
             try
             {
-                schemaNode = JSONNode.Parse(schemaText);
+                schemaDoc = JsonDocument.Parse(schemaText);
             }
             catch (Exception ex)
             {
@@ -44,44 +43,48 @@ namespace VTube.ConfigValidation
                 return errors;
             }
 
-            JSONNode instanceNode;
-            try
+            using (schemaDoc)
             {
-                instanceNode = JSONNode.Parse(jsonText);
-            }
-            catch (Exception ex)
-            {
-                errors.Add(new ValidationError("$", BuildParseError(jsonText, ex)));
-                return errors;
-            }
+                JsonDocument instanceDoc;
+                try
+                {
+                    instanceDoc = JsonDocument.Parse(jsonText);
+                }
+                catch (Exception ex)
+                {
+                    errors.Add(new ValidationError("$", BuildParseError(jsonText, ex)));
+                    return errors;
+                }
 
-            ValidateNode(instanceNode, schemaNode, "$", errors);
+                using (instanceDoc)
+                {
+                    ValidateNode(instanceDoc.RootElement, schemaDoc.RootElement, "$", errors);
+                }
+            }
             return errors;
         }
 
-        private static void ValidateNode(JSONNode instance, JSONNode schema, string path, List<ValidationError> errors)
+        private static void ValidateNode(JsonElement instance, JsonElement schema, string path, List<ValidationError> errors)
         {
-            if (schema == null)
+            if (schema.ValueKind != JsonValueKind.Object)
             {
                 return;
             }
 
-            var typeNode = schema["type"];
-            if (typeNode != null && typeNode.IsString)
+            if (schema.TryGetProperty("type", out var typeNode) && typeNode.ValueKind == JsonValueKind.String)
             {
-                var expectedType = typeNode.Value;
-                if (!TypeMatches(instance, expectedType))
+                var expectedType = typeNode.GetString();
+                if (!string.IsNullOrWhiteSpace(expectedType) && !TypeMatches(instance, expectedType))
                 {
                     errors.Add(new ValidationError(path, $"Expected type '{expectedType}', got '{DescribeType(instance)}'"));
                     return;
                 }
             }
 
-            var enumNode = schema["enum"] as JSONArray;
-            if (enumNode != null && enumNode.Count > 0)
+            if (schema.TryGetProperty("enum", out var enumNode) && enumNode.ValueKind == JsonValueKind.Array)
             {
                 var matched = false;
-                foreach (var item in enumNode)
+                foreach (var item in enumNode.EnumerateArray())
                 {
                     if (JsonEquals(instance, item))
                     {
@@ -97,96 +100,114 @@ namespace VTube.ConfigValidation
                 }
             }
 
-            if (instance != null && instance.IsNumber)
+            if (instance.ValueKind == JsonValueKind.Number)
             {
-                var minNode = schema["minimum"];
-                var maxNode = schema["maximum"];
-                var value = instance.AsDouble;
-                if (minNode != null && minNode.IsNumber && value < minNode.AsDouble)
+                if (schema.TryGetProperty("minimum", out var minNode) && minNode.ValueKind == JsonValueKind.Number)
                 {
-                    errors.Add(new ValidationError(path, $"Value {value} is less than minimum {minNode.AsDouble}"));
+                    var value = instance.GetDouble();
+                    var minValue = minNode.GetDouble();
+                    if (value < minValue)
+                    {
+                        errors.Add(new ValidationError(path, $"Value {value} is less than minimum {minValue}"));
+                    }
                 }
-                if (maxNode != null && maxNode.IsNumber && value > maxNode.AsDouble)
+                if (schema.TryGetProperty("maximum", out var maxNode) && maxNode.ValueKind == JsonValueKind.Number)
                 {
-                    errors.Add(new ValidationError(path, $"Value {value} is greater than maximum {maxNode.AsDouble}"));
+                    var value = instance.GetDouble();
+                    var maxValue = maxNode.GetDouble();
+                    if (value > maxValue)
+                    {
+                        errors.Add(new ValidationError(path, $"Value {value} is greater than maximum {maxValue}"));
+                    }
                 }
             }
 
-            if (instance != null && instance.IsString)
+            if (instance.ValueKind == JsonValueKind.String)
             {
-                var minLenNode = schema["minLength"];
-                var maxLenNode = schema["maxLength"];
-                var value = instance.Value ?? string.Empty;
-                if (minLenNode != null && minLenNode.IsNumber && value.Length < minLenNode.AsInt)
+                var value = instance.GetString() ?? string.Empty;
+                if (schema.TryGetProperty("minLength", out var minLenNode) && minLenNode.ValueKind == JsonValueKind.Number)
                 {
-                    errors.Add(new ValidationError(path, $"String length {value.Length} is less than minLength {minLenNode.AsInt}"));
+                    var minLen = minLenNode.GetInt32();
+                    if (value.Length < minLen)
+                    {
+                        errors.Add(new ValidationError(path, $"String length {value.Length} is less than minLength {minLen}"));
+                    }
                 }
-                if (maxLenNode != null && maxLenNode.IsNumber && value.Length > maxLenNode.AsInt)
+                if (schema.TryGetProperty("maxLength", out var maxLenNode) && maxLenNode.ValueKind == JsonValueKind.Number)
                 {
-                    errors.Add(new ValidationError(path, $"String length {value.Length} is greater than maxLength {maxLenNode.AsInt}"));
+                    var maxLen = maxLenNode.GetInt32();
+                    if (value.Length > maxLen)
+                    {
+                        errors.Add(new ValidationError(path, $"String length {value.Length} is greater than maxLength {maxLen}"));
+                    }
                 }
             }
 
-            if (instance == null)
+            if (instance.ValueKind == JsonValueKind.Object)
             {
+                ValidateObject(instance, schema, path, errors);
                 return;
             }
 
-            if (instance.IsObject)
+            if (instance.ValueKind == JsonValueKind.Array)
             {
-                ValidateObject(instance.AsObject, schema, path, errors);
-                return;
-            }
-
-            if (instance.IsArray)
-            {
-                ValidateArray(instance.AsArray, schema, path, errors);
+                ValidateArray(instance, schema, path, errors);
             }
         }
 
-        private static void ValidateObject(JSONObject obj, JSONNode schema, string path, List<ValidationError> errors)
+        private static void ValidateObject(JsonElement obj, JsonElement schema, string path, List<ValidationError> errors)
         {
-            var requiredNode = schema["required"] as JSONArray;
-            if (requiredNode != null)
+            if (schema.TryGetProperty("required", out var requiredNode) && requiredNode.ValueKind == JsonValueKind.Array)
             {
-                foreach (var entry in requiredNode)
+                foreach (var entry in requiredNode.EnumerateArray())
                 {
-                    var key = entry.Value;
-                    if (!obj.HasKey(key))
+                    if (entry.ValueKind != JsonValueKind.String)
+                    {
+                        continue;
+                    }
+
+                    var key = entry.GetString();
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        continue;
+                    }
+
+                    if (!obj.TryGetProperty(key, out _))
                     {
                         errors.Add(new ValidationError(path, $"Missing required property '{key}'"));
                     }
                 }
             }
 
-            var propertiesNode = schema["properties"] as JSONObject;
-            var additionalNode = schema["additionalProperties"];
+            var hasProperties = schema.TryGetProperty("properties", out var propertiesNode) && propertiesNode.ValueKind == JsonValueKind.Object;
             var additionalAllowed = true;
-            JSONNode additionalSchema = null;
+            var hasAdditionalSchema = false;
+            JsonElement additionalSchema = default;
 
-            if (additionalNode != null)
+            if (schema.TryGetProperty("additionalProperties", out var additionalNode))
             {
-                if (additionalNode.IsBoolean)
+                if (additionalNode.ValueKind == JsonValueKind.False)
                 {
-                    additionalAllowed = additionalNode.AsBool;
+                    additionalAllowed = false;
                 }
-                else if (additionalNode.IsObject)
+                else if (additionalNode.ValueKind == JsonValueKind.Object)
                 {
+                    hasAdditionalSchema = true;
                     additionalSchema = additionalNode;
                 }
             }
 
-            foreach (var kv in obj)
+            foreach (var kv in obj.EnumerateObject())
             {
-                var key = kv.Key;
+                var key = kv.Name;
                 var value = kv.Value;
-                if (propertiesNode != null && propertiesNode.HasKey(key))
+                if (hasProperties && propertiesNode.TryGetProperty(key, out var propertySchema))
                 {
-                    ValidateNode(value, propertiesNode[key], AppendPath(path, key), errors);
+                    ValidateNode(value, propertySchema, AppendPath(path, key), errors);
                     continue;
                 }
 
-                if (additionalSchema != null)
+                if (hasAdditionalSchema)
                 {
                     ValidateNode(value, additionalSchema, AppendPath(path, key), errors);
                     continue;
@@ -199,104 +220,96 @@ namespace VTube.ConfigValidation
             }
         }
 
-        private static void ValidateArray(JSONArray array, JSONNode schema, string path, List<ValidationError> errors)
+        private static void ValidateArray(JsonElement array, JsonElement schema, string path, List<ValidationError> errors)
         {
-            var itemsSchema = schema["items"];
-            if (itemsSchema == null)
+            if (!schema.TryGetProperty("items", out var itemsSchema))
             {
                 return;
             }
 
-            for (var i = 0; i < array.Count; i++)
+            var i = 0;
+            foreach (var item in array.EnumerateArray())
             {
-                ValidateNode(array[i], itemsSchema, $"{path}[{i}]", errors);
+                ValidateNode(item, itemsSchema, $"{path}[{i}]", errors);
+                i++;
             }
         }
 
-        private static bool TypeMatches(JSONNode node, string expectedType)
+        private static bool TypeMatches(JsonElement node, string expectedType)
         {
             switch (expectedType)
             {
                 case "object":
-                    return node != null && node.IsObject;
+                    return node.ValueKind == JsonValueKind.Object;
                 case "array":
-                    return node != null && node.IsArray;
+                    return node.ValueKind == JsonValueKind.Array;
                 case "string":
-                    return node != null && node.IsString;
+                    return node.ValueKind == JsonValueKind.String;
                 case "number":
-                    return node != null && node.IsNumber;
+                    return node.ValueKind == JsonValueKind.Number;
                 case "integer":
-                    if (node == null || !node.IsNumber)
+                    if (node.ValueKind != JsonValueKind.Number)
                     {
                         return false;
                     }
-                    var value = node.AsDouble;
+                    if (node.TryGetInt64(out _))
+                    {
+                        return true;
+                    }
+                    var value = node.GetDouble();
                     return Math.Abs(value - Math.Round(value)) < 0.0000001;
                 case "boolean":
-                    return node != null && node.IsBoolean;
+                    return node.ValueKind == JsonValueKind.True || node.ValueKind == JsonValueKind.False;
                 case "null":
-                    return node == null || node.IsNull;
+                    return node.ValueKind == JsonValueKind.Null;
                 default:
                     return true;
             }
         }
 
-        private static string DescribeType(JSONNode node)
+        private static string DescribeType(JsonElement node)
         {
-            if (node == null || node.IsNull)
+            switch (node.ValueKind)
             {
-                return "null";
+                case JsonValueKind.Object:
+                    return "object";
+                case JsonValueKind.Array:
+                    return "array";
+                case JsonValueKind.String:
+                    return "string";
+                case JsonValueKind.Number:
+                    return "number";
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return "boolean";
+                case JsonValueKind.Null:
+                    return "null";
+                default:
+                    return "unknown";
             }
-            if (node.IsObject)
-            {
-                return "object";
-            }
-            if (node.IsArray)
-            {
-                return "array";
-            }
-            if (node.IsString)
-            {
-                return "string";
-            }
-            if (node.IsNumber)
-            {
-                return "number";
-            }
-            if (node.IsBoolean)
-            {
-                return "boolean";
-            }
-            return "unknown";
         }
 
-        private static bool JsonEquals(JSONNode left, JSONNode right)
+        private static bool JsonEquals(JsonElement left, JsonElement right)
         {
-            if (left == null && right == null)
-            {
-                return true;
-            }
-            if (left == null || right == null)
+            if (left.ValueKind != right.ValueKind)
             {
                 return false;
             }
-            if (left.IsNumber && right.IsNumber)
+
+            switch (left.ValueKind)
             {
-                return Math.Abs(left.AsDouble - right.AsDouble) < 0.0000001;
+                case JsonValueKind.Number:
+                    return Math.Abs(left.GetDouble() - right.GetDouble()) < 0.0000001;
+                case JsonValueKind.String:
+                    return string.Equals(left.GetString(), right.GetString(), StringComparison.Ordinal);
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return left.GetBoolean() == right.GetBoolean();
+                case JsonValueKind.Null:
+                    return true;
+                default:
+                    return false;
             }
-            if (left.IsString && right.IsString)
-            {
-                return string.Equals(left.Value, right.Value, StringComparison.Ordinal);
-            }
-            if (left.IsBoolean && right.IsBoolean)
-            {
-                return left.AsBool == right.AsBool;
-            }
-            if (left.IsNull && right.IsNull)
-            {
-                return true;
-            }
-            return false;
         }
 
         private static string AppendPath(string path, string key)
