@@ -1,5 +1,7 @@
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace app.Transport
 {
@@ -7,67 +9,39 @@ namespace app.Transport
     {
         public static byte[] EncodePng(FrameData frame)
         {
-            using var bitmap = CreateBitmap(frame);
+            using var image = CreateImage(frame);
             using var stream = new MemoryStream();
-            bitmap.Save(stream, ImageFormat.Png);
+            image.Save(stream, new PngEncoder());
             return stream.ToArray();
         }
 
         public static byte[] EncodeJpeg(FrameData frame, long quality = 80)
         {
-            using var bitmap = CreateBitmap(frame);
+            using var image = CreateImage(frame);
             using var stream = new MemoryStream();
-
-            var encoder = GetEncoder(ImageFormat.Jpeg);
-            if (encoder == null)
+            var encoder = new JpegEncoder
             {
-                bitmap.Save(stream, ImageFormat.Jpeg);
-                return stream.ToArray();
-            }
-
-            var encoderParams = new EncoderParameters(1);
-            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-            bitmap.Save(stream, encoder, encoderParams);
+                Quality = (int)Math.Clamp(quality, 1, 100)
+            };
+            image.Save(stream, encoder);
             return stream.ToArray();
         }
 
-        private static Bitmap CreateBitmap(FrameData frame)
+        private static Image<Rgba32> CreateImage(FrameData frame)
         {
             var width = frame.Header.Width;
             var height = frame.Header.Height;
-            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            var rect = new Rectangle(0, 0, width, height);
-            var data = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-            try
+            var pixelCount = width * height;
+            var pixels = new Rgba32[pixelCount];
+            var rgba = frame.RgbaBytes;
+            var offset = 0;
+            for (var i = 0; i < pixelCount; i++)
             {
-                var converted = ConvertRgbaToBgra(frame.RgbaBytes);
-                System.Runtime.InteropServices.Marshal.Copy(converted, 0, data.Scan0, converted.Length);
-            }
-            finally
-            {
-                bitmap.UnlockBits(data);
+                pixels[i] = new Rgba32(rgba[offset], rgba[offset + 1], rgba[offset + 2], rgba[offset + 3]);
+                offset += 4;
             }
 
-            return bitmap;
-        }
-
-        private static byte[] ConvertRgbaToBgra(byte[] rgba)
-        {
-            var converted = new byte[rgba.Length];
-            for (var i = 0; i < rgba.Length; i += 4)
-            {
-                converted[i] = rgba[i + 2];
-                converted[i + 1] = rgba[i + 1];
-                converted[i + 2] = rgba[i];
-                converted[i + 3] = rgba[i + 3];
-            }
-            return converted;
-        }
-
-        private static ImageCodecInfo? GetEncoder(ImageFormat format)
-        {
-            return ImageCodecInfo.GetImageDecoders().FirstOrDefault(codec => codec.FormatID == format.Guid);
+            return Image.LoadPixelData(pixels, width, height);
         }
     }
 }
