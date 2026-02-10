@@ -67,7 +67,7 @@
 - `dotnet test app.Tests` — не выполнилось из-за отказа в доступе к NuGet cache (`/home/yakoo/.local/share/NuGet/http-cache`).
 
 ### Коммиты
-- (будут добавлены после коммита)
+- `b7fe4cd` feat(A1_5): unity-app transport mmf+pipe
 
 ### Риски / follow-up
 - `System.Drawing` зависит от Windows-рантайма; если нужна кросс‑платформенность, потребуется замена энкодера.
