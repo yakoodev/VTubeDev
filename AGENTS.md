@@ -17,3 +17,4 @@ Derived formats must NOT trigger extra 3D renders.
 - Keep Unity .meta files intact (no GUID regeneration).
 - Prefer small, reviewable changes.
 - Before big edits: plan (bullets) + list files to change.
+- When the user says `выполни задачу` in repo root, follow `docs/agent-pipeline.md` and `tasks/AGENTS.md` to the letter (pick the next task via `tasks/TASKS_INDEX.md`, move it to `tasks/inProgress/`, create a branch, commit, test, push, open PR).
