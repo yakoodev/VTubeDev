@@ -45,4 +45,6 @@ unity/*.vsconfig
 app/bin/
 app/obj/
 app/.vs/
+app.Tests/bin/
+app.Tests/obj/
 app/*.csproj.user
