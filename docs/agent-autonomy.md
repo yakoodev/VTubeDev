@@ -13,8 +13,8 @@ This document captures the additional rules needed for autonomous task execution
 
 ## Tests and Checks
 - Always read the task file for required checks.
-- If the task lists checks, run them.
-- If the task does not list checks, no tests are required by default.
+- Always run relevant tests/linters. If you cannot, explain why.
+- If the task lists checks, run them in addition to relevant defaults.
 
 ## Unity MCP
 - When a Unity MCP is available, use it for:
