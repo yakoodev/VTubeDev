@@ -1,6 +1,6 @@
 # A1_2 — JSON Schema: scene/outputs/overlay/workspace (MVP)
 
-**Status:** inProgress
+**Status:** ready for review
 **Owner:** Codex
 **Started:** 2026-02-10
 **Branch:** task/A1_2-json-schema-mvp
@@ -52,3 +52,23 @@
 - *.schema.json
 - Validator code
 - Docs: как валидировать
+
+## Отчёт выполнения
+
+Что сделано:
+- Добавлены JSON Schemas для `scene.json`, `outputs.json`, `overlay.json`, `workspace.json`.
+- Реализован валидатор (subset JSON Schema: type/required/properties/additionalProperties/items/enum/min/max).
+- Runtime‑проверка на старте через `VT_PROJECT_PATH` или `--vtproj`, остановка playmode при ошибках.
+- Editor меню `VTube/Validate Configs` с возможностью выбрать `vtproj` и `workspace.json`.
+- Документация по валидации в `docs/vtproj.md`.
+
+Как проверить:
+1. В Unity Editor открыть меню `VTube/Validate Configs` и выбрать `examples/vtproj-minimal/vtproj`.
+2. (Опционально) выбрать `workspace.json` или пропустить.
+3. Сломать тип поля в `examples/vtproj-minimal/vtproj/ui/overlays/default/overlay.json` и повторить валидацию — должна быть ошибка с путём.
+
+Коммиты:
+- `5894d47` feat(A1_2): add config schemas and validator
+
+Риски / follow-ups:
+- Runtime‑валидация требует явного пути к `vtproj` (env/argv); при отсутствии пути проверка пропускается.
