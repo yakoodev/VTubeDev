@@ -1,6 +1,9 @@
 # A1_3 — ConfigLoader: поиск vtproj root + резолв относительных путей
 
-**Status:** todo
+**Status:** ready for review  
+**Owner:** Codex  
+**Started:** 2026-02-10  
+**Branch:** task/A1_3-configloader-vtproj-path-resolve
 
 
 ## Цель
@@ -49,3 +52,22 @@
 - ConfigLoader
 - PathResolver
 - Тесты резолва
+
+
+## Отчёт выполнения
+
+### Что сделано
+- Добавлены `IVtprojLocator`, `IConfigLoader` и реализация поиска vtproj через `--vtproj`, `VT_PROJECT_PATH`, либо `workspace.json` (lastProjectPath).
+- Добавлен `PathResolver` с резолвом относительных/абсолютных путей и читаемыми ошибками.
+- Подключена DI-регистрация в `app`.
+- Добавлены тесты резолва путей.
+
+### Как проверить
+1. `env NUGET_PACKAGES=/tmp/nuget-packages NUGET_HTTP_CACHE_PATH=/tmp/nuget-http-cache dotnet test app/app.sln`
+
+### Коммиты
+- 474e449 feat(A1_3): add config loader and path resolver
+- ec4656b docs(A1_3): add task report
+
+### Риски / follow-ups
+- Нет
