@@ -31,6 +31,7 @@ Thumbs.db
 # ===== Local config =====
 .env
 workspace.json
+tmp/
 
 # ===== Unity packages lock (оставляем!) =====
 # Packages/packages-lock.json  <-- НЕ игнорим, пусть коммитится
