@@ -15,6 +15,8 @@ This document captures the additional rules needed for autonomous task execution
 - Always read the task file for required checks.
 - Always run relevant tests/linters. If you cannot, explain why.
 - If the task lists checks, run them in addition to relevant defaults.
+- Default app tests (with safe NuGet cache paths): `env NUGET_PACKAGES=/tmp/nuget-packages NUGET_HTTP_CACHE_PATH=/tmp/nuget-http-cache dotnet test app/app.sln`
+- Unity tests (when applicable and PowerShell is available on Windows): `powershell.exe -ExecutionPolicy Bypass -File tools/unity-tests.ps1`
 
 ## Unity MCP
 - When a Unity MCP is available, use it for:
