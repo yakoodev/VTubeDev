@@ -70,9 +70,14 @@
 Коммиты:
 - `5894d47` feat(A1_2): add config schemas and validator
 - `163bebd` docs(A1_2): add task report
+- `69eb2ae` docs(A1_2): add PR note
+- `ec9f9c3` fix(A1_2): remove editor-only JSON dependency
 
 Риски / follow-ups:
 - Runtime‑валидация требует явного пути к `vtproj` (env/argv); при отсутствии пути проверка пропускается.
 
 PR:
 - `gh pr create` не выполнен (нет авторизации). Создать PR вручную: `https://github.com/yakoodev/VTubeDev/pull/new/task/A1_2-json-schema-mvp`.
+
+Проверка:
+- MCP: вызов `ConfigValidationRunner.ValidateProject` на `examples/vtproj-minimal/vtproj` — ошибок нет (0).
