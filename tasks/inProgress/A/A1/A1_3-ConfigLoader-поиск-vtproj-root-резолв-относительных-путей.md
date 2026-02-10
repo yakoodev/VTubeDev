@@ -66,7 +66,7 @@
 1. `env NUGET_PACKAGES=/tmp/nuget-packages NUGET_HTTP_CACHE_PATH=/tmp/nuget-http-cache dotnet test app/app.sln`
 
 ### Коммиты
-- TBD
+- 474e449 feat(A1_3): add config loader and path resolver
 
 ### Риски / follow-ups
 - Нет
