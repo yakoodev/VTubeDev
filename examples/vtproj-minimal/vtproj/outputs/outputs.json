@@ -1,0 +1,7 @@
+{
+  "outputsVersion": "1.0",
+  "profiles": {
+    "Release30": { "fps": 30, "jpegQuality": 80, "idleTimeoutSec": 10, "includeTags": [] },
+    "Debug15":   { "fps": 15, "jpegQuality": 60, "idleTimeoutSec": 5,  "includeTags": ["debug"] }
+  }
+}

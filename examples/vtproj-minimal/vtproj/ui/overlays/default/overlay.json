@@ -1,0 +1,9 @@
+{
+  "overlayFormatVersion": "1.0",
+  "id": "overlay_default",
+  "design": { "width": 1920, "height": 1080 },
+  "scaling": { "mode": "fit", "snapToPixels": true },
+  "safeArea": { "default": { "left": 0, "top": 0, "right": 0, "bottom": 0 } },
+  "widgets": [],
+  "tags": []
+}

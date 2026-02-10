@@ -1,0 +1,11 @@
+{
+  "sceneVersion": "1.0",
+  "id": "scene_main",
+  "name": "Main Scene",
+  "defaultCameraId": "cam_main",
+  "cameras": {
+    "cam_main": {
+      "name": "Main Camera"
+    }
+  }
+}
