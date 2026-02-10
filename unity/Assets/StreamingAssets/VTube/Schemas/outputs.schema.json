@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VTube Outputs Config",
+  "type": "object",
+  "required": ["outputsVersion", "profiles"],
+  "additionalProperties": false,
+  "properties": {
+    "outputsVersion": { "type": "string", "minLength": 1 },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["fps", "jpegQuality", "idleTimeoutSec", "includeTags"],
+        "additionalProperties": false,
+        "properties": {
+          "fps": { "type": "integer", "minimum": 1 },
+          "jpegQuality": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "idleTimeoutSec": { "type": "integer", "minimum": 0 },
+          "includeTags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "maxViewers": { "type": "integer", "minimum": 1 }
+        }
+      }
+    }
+  }
+}

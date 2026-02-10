@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VTube Overlay Config",
+  "type": "object",
+  "required": ["overlayFormatVersion", "id", "design", "scaling", "safeArea", "widgets", "tags"],
+  "properties": {
+    "overlayFormatVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "design": {
+      "type": "object",
+      "required": ["width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "scaling": {
+      "type": "object",
+      "required": ["mode", "snapToPixels"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["fit", "fill", "stretch"] },
+        "snapToPixels": { "type": "boolean" }
+      }
+    },
+    "safeArea": {
+      "type": "object",
+      "required": ["default"],
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "type": "object",
+          "required": ["left", "top", "right", "bottom"],
+          "additionalProperties": false,
+          "properties": {
+            "left": { "type": "number" },
+            "top": { "type": "number" },
+            "right": { "type": "number" },
+            "bottom": { "type": "number" }
+          }
+        }
+      }
+    },
+    "widgets": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

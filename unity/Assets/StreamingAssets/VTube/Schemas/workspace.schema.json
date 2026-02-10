@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VTube Workspace Config",
+  "type": "object",
+  "required": ["workspaceVersion", "lastProjectPath", "lastSceneId", "lastOverlayProfileId"],
+  "additionalProperties": false,
+  "properties": {
+    "workspaceVersion": { "type": "string", "minLength": 1 },
+    "lastProjectPath": { "type": "string", "minLength": 1 },
+    "lastSceneId": { "type": "string", "minLength": 1 },
+    "lastOverlayProfileId": { "type": "string", "minLength": 1 }
+  }
+}

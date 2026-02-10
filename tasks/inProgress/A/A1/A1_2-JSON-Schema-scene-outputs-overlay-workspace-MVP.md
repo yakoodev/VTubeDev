@@ -1,6 +1,9 @@
 # A1_2 — JSON Schema: scene/outputs/overlay/workspace (MVP)
 
-**Status:** todo
+**Status:** inProgress
+**Owner:** Codex
+**Started:** 2026-02-10
+**Branch:** task/A1_2-json-schema-mvp
 
 
 ## Цель
