@@ -67,6 +67,7 @@
 
 ### Коммиты
 - 474e449 feat(A1_3): add config loader and path resolver
+- ec4656b docs(A1_3): add task report
 
 ### Риски / follow-ups
 - Нет
