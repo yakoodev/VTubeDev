@@ -64,10 +64,13 @@
    - `POST /cmd` → Unity получает лог по requestId.
 
 ### Тесты
-- `dotnet test app.Tests` — не выполнилось из-за отказа в доступе к NuGet cache (`/home/yakoo/.local/share/NuGet/http-cache`).
+- `env NUGET_PACKAGES=/tmp/nuget-packages NUGET_HTTP_CACHE_PATH=/tmp/nuget-http-cache dotnet test app/app.sln` — ок (3 passed). Есть предупреждения CA1416 про Windows‑only API.
 
 ### Коммиты
 - `b7fe4cd` feat(A1_5): unity-app transport mmf+pipe
+- `85662c3` feat(A1_5): use ImageSharp for encoding
+- `2789fc2` fix(A1_5): ImageSharp pixel load generic
+- `9f18c92` chore(A1_5): bump ImageSharp to 3.1.12
 
 ### Риски / follow-up
 - `System.Drawing` зависит от Windows-рантайма; если нужна кросс‑платформенность, потребуется замена энкодера.
