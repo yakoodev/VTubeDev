@@ -62,6 +62,6 @@
 - Как проверить:
   - Проверить JSON на валидность, например `python3 -m json.tool <file>`.
 - Коммиты:
-  - `docs(A1_1): vtproj minimal structure + examples` (см. историю Git)
+  - `docs(A1_1): vtproj minimal structure + examples`
 - Риски/заметки:
   - Авто‑проверки отсутствуют, опираемся на ручную проверку.
